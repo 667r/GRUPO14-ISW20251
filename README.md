@@ -7,6 +7,8 @@ Este es el repositorio del **Grupo 8**, cuyos integrantes son:
 * Felipe Vallejos - 
 * **Tutor**: Diego Debarca 
 
-Video presentacion del cliente: https://www.youtube.com/watch?v=abJau21SDIk
+## Videos
+
+*[Video presentacion del cliente](https://www.youtube.com/watch?v=abJau21SDIk)
 
 

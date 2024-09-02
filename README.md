@@ -9,6 +9,6 @@ Este es el repositorio del **Grupo 8**, cuyos integrantes son:
 
 ## Videos
 
-*[Video presentacion del cliente](https://www.youtube.com/watch?v=abJau21SDIk)
+* [Video presentacion del cliente](https://www.youtube.com/watch?v=abJau21SDIk)
 
 

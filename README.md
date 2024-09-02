@@ -1,6 +1,6 @@
 # Grupo 8
 
-Este es el repositorio del **Grupo 8**, cuyos integrantes son:
+Este es el repositorio del *Grupo 8*, cuyos integrantes son:
 * Benjamin Soto   - 202204516-7
 * Pamela Sanchez  -
 * Mariano Varas   -

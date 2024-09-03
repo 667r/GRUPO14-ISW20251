@@ -4,7 +4,7 @@ Este es el repositorio del *Grupo 8*, cuyos integrantes son:
 * Benjamin Soto   - 202204516-7
 * Pamela Sánchez  - 202273538-4
 * Mariano Varas   -
-* Felipe Vallejos - 
+* Felipe Vallejos - 202173653-0
 * **Tutor**: Diego Debarca 
 
 ## Wiki

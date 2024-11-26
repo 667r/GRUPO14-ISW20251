@@ -23,21 +23,29 @@ Puede acceder a la Wiki mediante el siguiente [enlace](https://gitlab.com/analis
 * Después, migrar los cambios hechos al proyecto ejecutando:
 
 {
+
     docker exec -it django_webapp bash
+
     python manage.py makemigrations
+
     python manage.py migrate
+
 }
 
 * Luego, estando en el directorio del proyecto (Vigifia), abrir una terminal y ejecutar:
 
 {
+
     docker-compose build # para construir el proyecto y sus requerimientos
+
 }
 
 y
 
 {
+
     docker-compose up # para levantar el contenedor del proyecto
+    
 }
 
 * Finalmente, entrar a localhost:8000/ para ver el contenido del proyecto

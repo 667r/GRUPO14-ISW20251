@@ -14,4 +14,9 @@ Puede acceder a la Wiki mediante el siguiente [enlace](https://gitlab.com/analis
 
 * [Video presentacion del cliente](https://www.youtube.com/watch?v=abJau21SDIk)
 
+## Instrucciones para ejecutar proyecto con Docker
+
+ * En primera instancia, es necesario tener Docker instalado en su SO (más detalles en [enlace](https://docs.docker.com/engine/install/))
+
+ * Luego, estando en el directorio del proyecto (Vigifia), abrir una terminal y ejecutar 
 

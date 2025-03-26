@@ -1,11 +1,16 @@
 # Grupo 8
 
-Este es el repositorio del *Grupo 8*, cuyos integrantes son:
-* Benjamin Soto   - 202204516-7
-* Pamela Sánchez  - 202273538-4
-* Mariano Varas   - 202273611-9
-* Felipe Vallejos - 202173653-0
-* **Tutor**: Diego Debarca 
+Este es el repositorio del *Grupo 14*, cuyos integrantes son:
+* Cristóbal Espinoza Latorre - 202273565-1
+* Benjamin Soto              - 202204516-7
+* Renato Roggia              - 202204594-9
+* Mariano Varas              - 202273611-9
+* **Tutor**: Eduardo Pino 
+
+
+## Info
+
+Este es el mismo proyecto que se presentó para el ramo INF236 y se seguirá trabajando para INF225.
 
 ## Wiki
 Puede acceder a la Wiki mediante el siguiente [enlace](https://gitlab.com/analisis-y-dise-o-de-software/Vigifia/-/wikis/home)

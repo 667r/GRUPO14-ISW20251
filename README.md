@@ -1,4 +1,4 @@
-# Grupo 8
+# Grupo 14
 
 Este es el repositorio del *Grupo 14*, cuyos integrantes son:
 * Cristóbal Espinoza Latorre - 202273565-1
@@ -20,38 +20,79 @@ Puede acceder a la Wiki mediante el siguiente [enlace](https://gitlab.com/analis
 * [Video presentacion del cliente](https://www.youtube.com/watch?v=abJau21SDIk)
 * [Video final](https://www.youtube.com/watch?v=tYey6C8v0t0)
 
-## Instrucciones para ejecutar proyecto con Docker
-
-* En primera instancia, es necesario tener Docker instalado en su SO (más detalles en este [enlace](https://docs.docker.com/engine/install/))
 
 
-* Después, migrar los cambios hechos al proyecto ejecutando:
+## Cómo levantar el proyecto con Docker
 
-{
+### 1. Requisitos previos
+Antes de comenzar, asegúrate de tener Docker y Docker Compose instalados en tu sistema:
 
-    docker exec -it django_webapp bash
+- **Instalar Docker**: [Guía oficial](https://docs.docker.com/engine/install/)
+- **Instalar Docker Compose**: Ya viene incluido en Docker Desktop (para Mac y Windows).
 
-    python manage.py makemigrations
+---
 
-    python manage.py migrate
+### 2. Ubicación del proyecto
+Abre una terminal y ubícate en el directorio del proyecto, donde se encuentran los archivos:
 
-}
+```bash
+cd ruta/al/proyecto
+```
 
-* Luego, estando en el directorio del proyecto (Vigifia), abrir una terminal y ejecutar:
+---
 
-{
+### 3. Construir los contenedores
+Ejecuta el siguiente comando para construir las imágenes del proyecto:
 
-    docker-compose build # para construir el proyecto y sus requerimientos
+```bash
+docker-compose build
+```
 
-}
+Esto creará dos servicios:
 
-y
+- `web`: la aplicación Django.
+- `db`: una base de datos PostgreSQL configurada con:
+  - Usuario: `equipo`
+  - Contraseña: `equipo123`
+  - Base de datos: `analisis`
 
-{
+---
 
-    docker-compose up # para levantar el contenedor del proyecto
-    
-}
+### 4. Levantar los contenedores
+Una vez construidos, levanta los contenedores con:
 
-* Finalmente, entrar a localhost:8000/ para ver el contenido del proyecto
+```bash
+docker-compose up
+```
+
+La aplicación quedará disponible en `http://localhost:8000/`.
+
+---
+
+### 5. Aplicar migraciones
+Con los contenedores corriendo, abre una terminal aparte y entra al contenedor de Django:
+
+```bash
+docker exec -it django_webapp bash
+```
+
+Y luego corre:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Esto aplicará las migraciones necesarias para que la base de datos quede operativa.
+
+---
+
+### 6. Acceder a la app
+Abre tu navegador y ve a:
+
+```
+http://localhost:8000/
+```
+
+Ahí deberías ver la app funcionando correctamente.
 

@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'vigifia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'analisis', # Cambiar nombre de BD, usuario, contraseña y host de manera que coincidan con 
-        'USER': 'mariano',  # lo escrito en el archivo docker-compose.yml, si no, ocurre un error de conexión 
-        'PASSWORD': '123',  # con el localhost.
+        'NAME': 'isw',
+        'USER': 'equipo',
+        'PASSWORD': 'equipo123',
         'HOST': 'db',
-        'PORT': '5432', 
+        'PORT': '5432',
     }
 }
 

@@ -54,7 +54,7 @@ Esto creará dos servicios:
 - `db`: una base de datos PostgreSQL configurada con:
   - Usuario: `equipo`
   - Contraseña: `equipo123`
-  - Base de datos: `analisis`
+  - Base de datos: `isw`
 
 ---
 

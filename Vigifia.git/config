@@ -8,3 +8,4 @@
 	url = git@gitlab.com:analisis-y-dise-o-de-software/Vigifia.git
 	fetch = +refs/*:refs/*
 	mirror = true
+	pushurl = git@github.com:667r/GRUPO14-ISW20251.git

@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    container_name: django_webapp
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: equipo
+      POSTGRES_PASSWORD: equipo123
+      POSTGRES_DB: isw
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U equipo -d isw"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

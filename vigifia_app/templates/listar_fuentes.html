@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fuentes Externas</title>
+</head>
+<body>
+    <h1>Fuentes Externas</h1>
+    <a href="{% url 'crear_fuente' %}">➕ Agregar nueva fuente</a>
+    <table border="1" style="margin-top: 1em;">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for fuente in fuentes %}
+            <tr>
+                <td>{{ fuente.nombre }}</td>
+                <td>{{ fuente.tipo }}</td>
+                <td>{{ fuente.fecha_subida|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'vista_csv' fuente.id %}">👁️ Ver</a> |
+                    <a href="{% url 'eliminar_fuente' fuente.id %}">🗑️ Eliminar</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No hay fuentes aún.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

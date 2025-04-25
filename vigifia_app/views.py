@@ -1,12 +1,30 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Boletin
 from django.db.models import Q
 from django import forms
 from django.contrib import messages
-from django.shortcuts import redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from .forms import FuenteExternaForm
+from .models import FuenteExterna
+import csv
+from django.contrib import messages
+import pandas as pd
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import FuenteExternaSerializer
+
+
+@api_view(['GET'])
+def api_fuentes(request):
+    fuentes = FuenteExterna.objects.all()
+    serializer = FuenteExternaSerializer(fuentes, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def api_ping(request):
+    return Response({"message": "Hola desde Django 👋"})
 
 def index(request):
     return render(request, 'index.html')
@@ -84,3 +102,44 @@ def crear_boletin(request):
     else:
         form = BoletinForm()
     return render(request, 'crear_boletin.html', {'form': form})
+
+def vista_csv(request, fuente_id):
+    fuente = get_object_or_404(FuenteExterna, id=fuente_id)
+    if fuente.archivo_csv and fuente.tipo == 'csv':
+        try:
+            df = pd.read_csv(fuente.archivo_csv.path)
+            headers = df.columns.tolist()
+            rows = df.values.tolist()
+            context = {
+                'fuente': fuente,
+                'headers': headers,
+                'rows': rows
+            }
+            return render(request, 'vista_csv.html', context)
+        except Exception as e:
+            return render(request, 'vista_csv.html', {'error': str(e)})
+    else:
+        return render(request, 'vista_csv.html', {'error': 'No es un archivo CSV válido.'})
+    
+def listar_fuentes(request):
+    fuentes = FuenteExterna.objects.all().order_by('-fecha_subida')
+    return render(request, 'listar_fuentes.html', {'fuentes': fuentes})
+
+def crear_fuente(request):
+    if request.method == 'POST':
+        form = FuenteExternaForm(request.POST, request.FILES)
+        if form.is_valid():
+            fuente = form.save(commit=False)
+            fuente.usuario = request.user
+            fuente.save()
+            messages.success(request, "Fuente agregada exitosamente.")
+            return redirect('listar_fuentes')
+    else:
+        form = FuenteExternaForm()
+    return render(request, 'crear_fuente.html', {'form': form})
+
+def eliminar_fuente(request, fuente_id):
+    fuente = get_object_or_404(FuenteExterna, id=fuente_id)
+    fuente.delete()
+    messages.success(request, "Fuente eliminada.")
+    return redirect('listar_fuentes')

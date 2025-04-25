@@ -1,7 +1,25 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+class FuenteExterna(models.Model):
+    TIPO_CHOICES = [
+        ('csv', 'Archivo CSV'),
+        ('api', 'API Externa'),
+    ]
 
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    archivo_csv = models.FileField(upload_to='fuentes/', blank=True, null=True)
+    nombre = models.CharField(max_length=100)
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+    descripcion = models.TextField(blank=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    url_api = models.URLField(blank=True, null=True)
+    
+
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo})"
+    
 class Boletin(models.Model):
     CATEGORIAS = [
         ('Cambio climático', 'Cambio climático'),

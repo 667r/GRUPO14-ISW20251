@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Importar datos</title>
+    <script>
+        function toggleInputs() {
+            var tipo = document.getElementById("id_tipo").value;
+            document.getElementById("csv_field").style.display = (tipo === "csv") ? "block" : "none";
+            document.getElementById("api_field").style.display = (tipo === "api") ? "block" : "none";
+        }
+        window.addEventListener("DOMContentLoaded", toggleInputs);
+    </script>
+</head>
+<body>
+    <h1>Importar datos</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.tipo.label_tag }} {{ form.tipo }}</p>
+
+        <div id="csv_field" style="display:none;">
+            <p>{{ form.archivo_csv.label_tag }} {{ form.archivo_csv }}</p>
+        </div>
+
+        <div id="api_field" style="display:none;">
+            <p>{{ form.url_api.label_tag }} {{ form.url_api }}</p>
+        </div>
+
+        <p>{{ form.nombre.label_tag }} {{ form.nombre }}</p>
+        <p>{{ form.descripcion.label_tag }} {{ form.descripcion }}</p>
+
+        <button type="submit">Subir</button>
+    </form>
+
+    <script>
+        document.getElementById("id_tipo").addEventListener("change", toggleInputs);
+    </script>
+</body>
+</html>
+

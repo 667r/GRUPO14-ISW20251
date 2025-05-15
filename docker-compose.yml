@@ -5,6 +5,8 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - ./media:/app/media
+      - ./backups:/app/backups
     ports:
       - "8000:8000"
     depends_on:
@@ -27,3 +29,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+volumes:
+  pgdata:
+  backups:

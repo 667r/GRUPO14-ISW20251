@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from .views import api_fuentes
-from vigifia_app.views import api_ping
+from .views import backup_manual_view
+from .views import api_ping
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -15,6 +16,7 @@ urlpatterns = [
     path('fuentes/', views.listar_fuentes, name='listar_fuentes'),
     path('fuentes/nueva/', views.crear_fuente, name='crear_fuente'),
     path('fuentes/eliminar/<int:fuente_id>/', views.eliminar_fuente, name='eliminar_fuente'),
+    path('backup/manual/', views.backup_manual_view, name='backup_manual'),
 
 ]
 

@@ -1,17 +1,28 @@
-# Usar una imagen base de Python
+
 FROM python:3.10-slim
 
-# Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copiar los archivos del proyecto al contenedor
+RUN apt-get update && \
+    apt-get install -y cron && \
+    apt-get clean
+
 COPY . .
 
-# Instalar las dependencias
+RUN chmod +x /app/backups/backup.sh
+
+COPY cronjobs /etc/cron.d/backup-cron
+
+RUN chmod 0644 /etc/cron.d/backup-cron && \
+    crontab /etc/cron.d/backup-cron
+
+
+RUN touch /var/log/cron.log
+
+RUN apt-get update && apt-get install -y postgresql-client && apt-get clean
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponer el puerto para el servidor Django
 EXPOSE 8000
 
-# Comando para ejecutar el servidor Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD cron && python manage.py runserver 0.0.0.0:8000

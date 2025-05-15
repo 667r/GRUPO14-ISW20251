@@ -14,7 +14,12 @@ import pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import FuenteExternaSerializer
-
+import subprocess
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from django.utils.timezone import now
+import os
+from datetime import datetime
 
 @api_view(['GET'])
 def api_fuentes(request):
@@ -143,3 +148,27 @@ def eliminar_fuente(request, fuente_id):
     fuente.delete()
     messages.success(request, "Fuente eliminada.")
     return redirect('listar_fuentes')
+
+@staff_member_required   
+def backup_manual_view(request):
+    now = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"/app/backups/manual_backup_{now}.sql"
+
+    try:
+        result = subprocess.run(
+            [
+                "pg_dump",
+                "-h", "db",
+                "-U", "equipo",
+                "-d", "isw",
+                "-f", filename
+            ],
+            env={**os.environ, "PGPASSWORD": "equipo123"},  # ⚠️ aquí pones tu password de DB
+            check=True
+        )
+        with open(filename, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='application/sql')
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(filename)}"'
+            return response
+    except Exception as e:
+        return HttpResponse(f"Error al generar backup: {e}")

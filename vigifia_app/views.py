@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Boletin
+from .serializers import BoletinSerializer
 from django.db.models import Q
 from django import forms
 from django.contrib import messages
@@ -21,6 +22,8 @@ from django.utils.timezone import now
 import os
 from datetime import datetime
 
+
+
 @api_view(['GET'])
 def api_fuentes(request):
     fuentes = FuenteExterna.objects.all()
@@ -30,6 +33,13 @@ def api_fuentes(request):
 @api_view(['GET'])
 def api_ping(request):
     return Response({"message": "Hola desde Django 👋"})
+
+#endpoint agregado para pruebas unitarias hito 3
+@api_view(['GET'])
+def api_boletines(request):
+    boletines = Boletin.objects.all().order_by('-fecha')
+    serializer = BoletinSerializer(boletines, many=True)
+    return Response(serializer.data)
 
 def index(request):
     return render(request, 'index.html')

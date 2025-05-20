@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework.test import APIClient 
 
-#test simple, no crucial
+# Test simple: endpoint /api/ping/
 class ApiPingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -21,55 +21,59 @@ class ApiPingTest(TestCase):
             url_api='http://test.com'
         )
 
-    def test_get_ping(self):
+    def test_get_ping_returns_200(self):
         response = self.client.get('/api/ping/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"message": "Hola desde Django 👋"})
 
-    def test_post_ping_not_allowed(self):
+    def test_post_ping_returns_405(self):
         response = self.client.post('/api/ping/')
         self.assertEqual(response.status_code, 405)
 
-#test simple2, no crucial
+# Test para endpoint /api/fuentes/
 class ApiFuentesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = Client()
-        # Crear un usuario necesario para el FK 'usuario'
         usuario = User.objects.create_user(username='testuser', password='12345')
-
         FuenteExterna.objects.create(
             nombre='Fuente Test',
-            tipo='api',  # uno de los valores válidos para TIPO_CHOICES
+            tipo='api',
             usuario=usuario,
             url_api='http://test.com'
         )
 
-    def test_get_fuentes_with_data(self):
+    def test_get_fuentes_returns_data_when_exist(self):
         response = self.client.get('/api/fuentes/')
         fuentes = FuenteExterna.objects.all()
         serializer = FuenteExternaSerializer(fuentes, many=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), serializer.data)
 
-    def test_get_fuentes_empty(self):
-        FuenteExterna.objects.all().delete()  # borrar todas las fuentes
+    def test_get_fuentes_returns_empty_when_none(self):
+        FuenteExterna.objects.all().delete()
         response = self.client.get('/api/fuentes/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
 
-#prueba untaria básica,
+# Test para endpoint /api/boletines/
 class ApiBoletinesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = APIClient()
-        # Crear boletines de prueba
         Boletin.objects.create(titulo='Boletin 1', fecha='2024-01-01', tipo='Info', categoria='Cat1', ubicacion='Loc1')
         Boletin.objects.create(titulo='Boletin 2', fecha='2024-01-02', tipo='Aviso', categoria='Cat2', ubicacion='Loc2')
 
-    def test_get_boletines(self):
+    def test_get_boletines_returns_data(self):
         url = reverse('api_boletines')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['titulo'], 'Boletin 2')  # orden descendente por fecha
+        self.assertEqual(response.data[0]['titulo'], 'Boletin 2')  # orden por fecha descendente
+
+    def test_get_boletines_returns_empty_list(self):
+        Boletin.objects.all().delete()
+        url = reverse('api_boletines')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])

@@ -58,6 +58,11 @@ class ApiFuentesTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
 
+    def test_post_fuente_invalida(self):
+        response = self.client.post('/api/fuentes/', {})  # sin datos
+        print("\n[POST /fuentes/ sin datos] ->", response.status_code)
+        self.assertEqual(response.status_code, 405)
+
 # Test para /api/boletines/
 class ApiBoletinesTest(TestCase):
     @classmethod

@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'isw',
         'USER': 'equipo',
         'PASSWORD': 'equipo123',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }

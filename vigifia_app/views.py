@@ -5,12 +5,12 @@ from .serializers import BoletinSerializer
 from django.db.models import Q
 from django import forms
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import FuenteExternaForm
 from .models import FuenteExterna
+from django.contrib.auth.decorators import login_required, user_passes_test
 import csv
-from django.contrib import messages
 import pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -25,6 +25,8 @@ from datetime import datetime
 import requests
 from django.core.exceptions import ValidationError
 import json
+from vigifia_app.utils.backup import generate_backup, restore_backup
+
 
 
 
@@ -46,7 +48,7 @@ def api_boletines(request):
     return Response(serializer.data)
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {})
 
 def login_view(request):
     if request.method == 'POST':
@@ -127,22 +129,24 @@ def vista_csv(request, fuente_id):
 
     if fuente.tipo == 'csv':
         handler = CSVSourceHandler(fuente)
-    elif fuente.tipo == 'api' and fuente.contenido:
+    elif fuente.tipo == 'api':
         handler = APISourceHandler(fuente)
-        if isinstance(fuente.contenido, dict) and 'message' in fuente.contenido:
-            imagen_url = fuente.contenido['message']
-
-        return render(request, 'vista_csv.html', {
-            'fuente': fuente,
-            'imagen_url': imagen_url,
-        })
     else:
         return render(request, 'vista_csv.html', {'error': 'Tipo de fuente no soportado.'})
 
+    # Procesamiento de datos
     try:
         data = handler.ingest()
         fuente.contenido = data
         fuente.save()
+
+        if fuente.tipo == 'api' and isinstance(data, dict) and 'message' in data:
+            imagen_url = data['message']
+            return render(request, 'vista_csv.html', {
+                'fuente': fuente,
+                'imagen_url': imagen_url,
+            })
+
         if isinstance(data, list):
             headers = data[0].keys() if data else []
             rows = [d.values() for d in data]
@@ -152,7 +156,11 @@ def vista_csv(request, fuente_id):
                 'rows': rows
             })
         else:
-            return render(request, 'vista_csv.html', {'json_content': json.dumps(data, indent=2)})
+            return render(request, 'vista_csv.html', {
+                'fuente': fuente,
+                'json_content': json.dumps(data, indent=2)
+            })
+
     except Exception as e:
         return render(request, 'vista_csv.html', {'error': str(e)})
 
@@ -203,3 +211,21 @@ def backup_manual_view(request):
             return response
     except Exception as e:
         return HttpResponse(f"Error al generar backup: {e}")
+    
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def restaurar_backup_view(request):
+    filename = request.POST.get('backup_file')
+    if filename:
+        success = restore_backup(filename)
+        if success:
+            messages.success(request, f"Backup restaurado correctamente desde {filename}")
+        else:
+            messages.error(request, "Error al restaurar el backup.")
+    else:
+        messages.error(request, "Debe especificar un archivo de respaldo.")
+    return redirect('admin:index')
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')  # Redirige al inicio tras cerrar sesión

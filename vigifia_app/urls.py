@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import api_fuentes
-from .views import backup_manual_view
+from .views import backup_manual_view, logout_view
 from .views import api_ping
 from .views import api_boletines
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('fuentes/nueva/', views.crear_fuente, name='crear_fuente'),
     path('fuentes/eliminar/<int:fuente_id>/', views.eliminar_fuente, name='eliminar_fuente'),
     path('backup/manual/', views.backup_manual_view, name='backup_manual'),
+    path('logout/', logout_view, name='logout'),
 
 ]
 

@@ -1,1 +1,2 @@
-0 2 * * * root /app/backups/backup.sh >> /var/log/cron.log 2>&1
+
+0 3 * * * root /app/backups/backup.sh >> /var/log/cron.log 2>&1 && echo "[$(date)] backup automático realizado." >> /app/backups/backup.log

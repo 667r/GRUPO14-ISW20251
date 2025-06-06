@@ -1,45 +1,25 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Vista previa: {{ fuente.nombre }} - VigiFIA</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-        }
-        th {
-            background-color: #f8f8f8;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Vista previa de fuente</title>
 </head>
 <body>
-    <h1>Vista previa de fuente: {{ fuente.nombre }}</h1>
+    <h1>Vista previa de fuente API</h1>
+
+    {% if imagen_url %}
+        <p><strong>Imagen obtenida:</strong></p>
+        <img src="{{ imagen_url }}" alt="Imagen de API" style="max-width: 400px;">
+    {% endif %}
+
+    {% if json_raw %}
+        <h3>Contenido JSON completo</h3>
+        <pre>{{ json_raw }}</pre>
+    {% endif %}
+
     {% if error %}
         <p style="color:red;">{{ error }}</p>
-    {% else %}
-        <table>
-            <thead>
-                <tr>
-                    {% for col in headers %}
-                        <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                    <tr>
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     {% endif %}
 </body>
 </html>

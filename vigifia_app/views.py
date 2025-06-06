@@ -17,10 +17,14 @@ from rest_framework.response import Response
 from .serializers import FuenteExternaSerializer
 import subprocess
 from django.contrib.admin.views.decorators import staff_member_required
+from vigifia_app.services.data_ingestion import CSVSourceHandler, APISourceHandler
 from django.http import HttpResponse
 from django.utils.timezone import now
 import os
 from datetime import datetime
+import requests
+from django.core.exceptions import ValidationError
+import json
 
 
 
@@ -120,21 +124,38 @@ def crear_boletin(request):
 
 def vista_csv(request, fuente_id):
     fuente = get_object_or_404(FuenteExterna, id=fuente_id)
-    if fuente.archivo_csv and fuente.tipo == 'csv':
-        try:
-            df = pd.read_csv(fuente.archivo_csv.path)
-            headers = df.columns.tolist()
-            rows = df.values.tolist()
-            context = {
+
+    if fuente.tipo == 'csv':
+        handler = CSVSourceHandler(fuente)
+    elif fuente.tipo == 'api' and fuente.contenido:
+        handler = APISourceHandler(fuente)
+        if isinstance(fuente.contenido, dict) and 'message' in fuente.contenido:
+            imagen_url = fuente.contenido['message']
+
+        return render(request, 'vista_csv.html', {
+            'fuente': fuente,
+            'imagen_url': imagen_url,
+        })
+    else:
+        return render(request, 'vista_csv.html', {'error': 'Tipo de fuente no soportado.'})
+
+    try:
+        data = handler.ingest()
+        fuente.contenido = data
+        fuente.save()
+        if isinstance(data, list):
+            headers = data[0].keys() if data else []
+            rows = [d.values() for d in data]
+            return render(request, 'vista_csv.html', {
                 'fuente': fuente,
                 'headers': headers,
                 'rows': rows
-            }
-            return render(request, 'vista_csv.html', context)
-        except Exception as e:
-            return render(request, 'vista_csv.html', {'error': str(e)})
-    else:
-        return render(request, 'vista_csv.html', {'error': 'No es un archivo CSV válido.'})
+            })
+        else:
+            return render(request, 'vista_csv.html', {'json_content': json.dumps(data, indent=2)})
+    except Exception as e:
+        return render(request, 'vista_csv.html', {'error': str(e)})
+
     
 def listar_fuentes(request):
     fuentes = FuenteExterna.objects.all().order_by('-fecha_subida')

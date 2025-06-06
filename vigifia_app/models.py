@@ -14,6 +14,7 @@ class FuenteExterna(models.Model):
     descripcion = models.TextField(blank=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     url_api = models.URLField(blank=True, null=True)
+    contenido = models.JSONField(blank=True, null=True)
     
 
 

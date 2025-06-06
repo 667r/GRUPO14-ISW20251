@@ -1,3 +1,4 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,7 +16,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- BLOQUE PERSONALIZABLE -->
             <ul class="navbar-nav">
+                {% block navbar_items %}
                 <li class="nav-item">
                     <a class="nav-link" href="/">Inicio</a>
                 </li>
@@ -25,7 +28,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contacto</a>
                 </li>
+                {% endblock %}
             </ul>
+
+            <!-- NAVBAR DERECHA -->
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">

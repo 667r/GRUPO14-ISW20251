@@ -1,10 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Fuentes Externas - VigiFIA{% endblock %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fuentes Externas - VigiFIA</title>
-</head>
-<body>
+{% block content %}
     <h1>Fuentes Externas</h1>
     <a href="{% url 'crear_fuente' %}">➕ Agregar nueva fuente</a>
     <table border="1" style="margin-top: 1em;">
@@ -32,5 +29,4 @@
         {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+{% endblock %}

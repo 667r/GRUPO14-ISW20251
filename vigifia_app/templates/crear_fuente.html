@@ -1,7 +1,6 @@
-
-<!DOCTYPE html>
-<html>
-<head>
+{% extends 'base.html' %}
+{% block title %}Subir Fuente Externa - VigiFIA{% endblock %}
+{% block content %}
     <title>Subir Fuente Externa - VigiFIA</title>
     <script>
         function toggleInputs() {
@@ -35,5 +34,4 @@
     <script>
         document.getElementById("id_tipo").addEventListener("change", toggleInputs);
     </script>
-</body>
-</html>
+{% endblock %}

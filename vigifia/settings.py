@@ -110,6 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = '/acceso-denegado/'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

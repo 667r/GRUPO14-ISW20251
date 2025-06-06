@@ -1,25 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Vista previa de fuente - VigiFIA{% endblock %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Vista previa de fuente</title>
-</head>
-<body>
-    <h1>Vista previa de fuente API</h1>
+{% block content %}
+<h1>Vista previa de fuente</h1>
+{% if headers and rows %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 
-    {% if imagen_url %}
-        <p><strong>Imagen obtenida:</strong></p>
-        <img src="{{ imagen_url }}" alt="Imagen de API" style="max-width: 400px;">
-    {% endif %}
-
-    {% if json_raw %}
-        <h3>Contenido JSON completo</h3>
-        <pre>{{ json_raw }}</pre>
-    {% endif %}
-
-    {% if error %}
+{% if imagen_url %}<img src="{{ imagen_url }}" alt="Imagen">{% endif %}
+{% if headers %}
+        <h2>Datos de {% if table_title %}{{ table_title }}{% else %}fuente{% endif %}</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    {% for header in headers %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for value in row %}
+                            <td>
+                                {% if value|stringformat:"s"|slice:":4" == "http" %}
+                                    <img src="{{ value }}" alt="img" style="max-height: 100px;">
+                                {% else %}
+                                    {{ value }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif json_content %}
+        <pre>{{ json_content }}</pre>
+    {% elif error %}
         <p style="color:red;">{{ error }}</p>
+    {% else %}
+        <p>No hay datos disponibles.</p>
     {% endif %}
-</body>
-</html>
+{% endblock %}

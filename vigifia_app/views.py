@@ -111,6 +111,7 @@ class BoletinForm(forms.ModelForm):
             'fecha': forms.DateInput(attrs={'type': 'date'}),
         }
 
+@login_required
 def crear_boletin(request):
     if request.method == 'POST':
         form = BoletinForm(request.POST, request.FILES)
@@ -134,20 +135,33 @@ def vista_csv(request, fuente_id):
     else:
         return render(request, 'vista_csv.html', {'error': 'Tipo de fuente no soportado.'})
 
-    # Procesamiento de datos
     try:
         data = handler.ingest()
         fuente.contenido = data
         fuente.save()
 
+        # Si es una API con imagen simple
         if fuente.tipo == 'api' and isinstance(data, dict) and 'message' in data:
-            imagen_url = data['message']
             return render(request, 'vista_csv.html', {
                 'fuente': fuente,
-                'imagen_url': imagen_url,
+                'imagen_url': data['message']
             })
 
-        if isinstance(data, list):
+        # Si la respuesta es un diccionario con una lista de elementos
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(value, list) and all(isinstance(item, dict) for item in value):
+                    headers = value[0].keys() if value else []
+                    rows = [item.values() for item in value]
+                    return render(request, 'vista_csv.html', {
+                        'fuente': fuente,
+                        'headers': headers,
+                        'rows': rows,
+                        'table_title': key,
+                    })
+
+        # Si es una lista de diccionarios simple
+        if isinstance(data, list) and all(isinstance(d, dict) for d in data):
             headers = data[0].keys() if data else []
             rows = [d.values() for d in data]
             return render(request, 'vista_csv.html', {
@@ -155,20 +169,23 @@ def vista_csv(request, fuente_id):
                 'headers': headers,
                 'rows': rows
             })
-        else:
-            return render(request, 'vista_csv.html', {
-                'fuente': fuente,
-                'json_content': json.dumps(data, indent=2)
-            })
+
+        # Mostrar como JSON plano si no se puede estructurar en tabla
+        return render(request, 'vista_csv.html', {
+            'fuente': fuente,
+            'json_content': json.dumps(data, indent=2)
+        })
 
     except Exception as e:
         return render(request, 'vista_csv.html', {'error': str(e)})
 
-    
+@login_required   
 def listar_fuentes(request):
     fuentes = FuenteExterna.objects.all().order_by('-fecha_subida')
     return render(request, 'listar_fuentes.html', {'fuentes': fuentes})
 
+
+@login_required 
 def crear_fuente(request):
     if request.method == 'POST':
         form = FuenteExternaForm(request.POST, request.FILES)
@@ -182,11 +199,13 @@ def crear_fuente(request):
         form = FuenteExternaForm()
     return render(request, 'crear_fuente.html', {'form': form})
 
+
 def eliminar_fuente(request, fuente_id):
     fuente = get_object_or_404(FuenteExterna, id=fuente_id)
     fuente.delete()
     messages.success(request, "Fuente eliminada.")
     return redirect('listar_fuentes')
+
 
 @staff_member_required   
 def backup_manual_view(request):
@@ -229,3 +248,7 @@ def restaurar_backup_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')  # Redirige al inicio tras cerrar sesión
+
+
+def acceso_denegado(request):
+    return render(request, 'acceso_denegado.html', status=403)

@@ -26,7 +26,7 @@ import requests
 from django.core.exceptions import ValidationError
 import json
 from vigifia_app.utils.backup import generate_backup, restore_backup
-
+import logging
 
 
 
@@ -206,13 +206,20 @@ def eliminar_fuente(request, fuente_id):
     messages.success(request, "Fuente eliminada.")
     return redirect('listar_fuentes')
 
+# Logging
+logging.basicConfig(filename='/app/backups/backup.log', level=logging.INFO)
 
+def log_backup(status):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f"Backup realizado a las {timestamp} con estado: {status}")
+# ---
 @staff_member_required   
 def backup_manual_view(request):
     now = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"/app/backups/manual_backup_{now}.sql"
 
     try:
+        # Ejecutar el comando de backup
         result = subprocess.run(
             [
                 "pg_dump",
@@ -221,15 +228,32 @@ def backup_manual_view(request):
                 "-d", "isw",
                 "-f", filename
             ],
-            env={**os.environ, "PGPASSWORD": "equipo123"},  # ⚠️ aquí pones tu password de DB
+            env={**os.environ, "PGPASSWORD": "equipo123"},  # ⚠️ Aquí pon tu password de DB
             check=True
         )
+        
+        # Guardar el archivo de backup
         with open(filename, 'rb') as f:
             response = HttpResponse(f.read(), content_type='application/sql')
             response['Content-Disposition'] = f'attachment; filename="{os.path.basename(filename)}"'
-            return response
+
+        # Log de éxito
+        log_backup('Éxito')
+        
+        # Notificación visual de éxito en el admin
+        messages.success(request, f"Backup realizado con éxito a las {now}")
+        
+        return response
+    
     except Exception as e:
-        return HttpResponse(f"Error al generar backup: {e}")
+        # Log de error
+        log_backup(f'Error: {str(e)}')
+        
+        # Notificación visual de error en el admin
+        messages.error(request, f"Error al generar backup: {str(e)}")
+        
+        return HttpResponse(f"Error al generar backup: {str(e)}")
+    
     
 @login_required
 @user_passes_test(lambda u: u.is_superuser)

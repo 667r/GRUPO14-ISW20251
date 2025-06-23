@@ -28,7 +28,7 @@ import json
 from vigifia_app.utils.backup import generate_backup, restore_backup
 import logging
 
-
+TVC = 'vista_csv.html'
 
 @api_view(['GET'])
 def api_fuentes(request):
@@ -125,59 +125,76 @@ def crear_boletin(request):
         form = BoletinForm()
     return render(request, 'crear_boletin.html', {'form': form})
 
+
+def procesar_api_con_imagen(data, fuente):
+    if isinstance(data, dict) and 'message' in data:
+        return render(None, TVC, {
+            'fuente': fuente,
+            'imagen_url': data['message']
+        })
+    return None
+
+def procesar_dict_con_listas(data, fuente):
+    for key, value in data.items():
+        if isinstance(value, list) and all(isinstance(item, dict) for item in value):
+            headers = value[0].keys() if value else []
+            rows = [item.values() for item in value]
+            return render(None, TVC, {
+                'fuente': fuente,
+                'headers': headers,
+                'rows': rows,
+                'table_title': key,
+            })
+    return None
+
+def procesar_lista_dicts(data, fuente):
+    if all(isinstance(d, dict) for d in data):
+        headers = data[0].keys() if data else []
+        rows = [d.values() for d in data]
+        return render(None, TVC, {
+            'fuente': fuente,
+            'headers': headers,
+            'rows': rows
+        })
+    return None
+
 def vista_csv(request, fuente_id):
     fuente = get_object_or_404(FuenteExterna, id=fuente_id)
 
+    handler = None
     if fuente.tipo == 'csv':
         handler = CSVSourceHandler(fuente)
     elif fuente.tipo == 'api':
         handler = APISourceHandler(fuente)
     else:
-        return render(request, 'vista_csv.html', {'error': 'Tipo de fuente no soportado.'})
+        return render(request, TVC, {'error': 'Tipo de fuente no soportado.'})
 
     try:
         data = handler.ingest()
         fuente.contenido = data
         fuente.save()
 
-        # Si es una API con imagen simple
-        if fuente.tipo == 'api' and isinstance(data, dict) and 'message' in data:
-            return render(request, 'vista_csv.html', {
-                'fuente': fuente,
-                'imagen_url': data['message']
-            })
-
-        # Si la respuesta es un diccionario con una lista de elementos
-        if isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, list) and all(isinstance(item, dict) for item in value):
-                    headers = value[0].keys() if value else []
-                    rows = [item.values() for item in value]
-                    return render(request, 'vista_csv.html', {
-                        'fuente': fuente,
-                        'headers': headers,
-                        'rows': rows,
-                        'table_title': key,
-                    })
-
-        # Si es una lista de diccionarios simple
-        if isinstance(data, list) and all(isinstance(d, dict) for d in data):
-            headers = data[0].keys() if data else []
-            rows = [d.values() for d in data]
-            return render(request, 'vista_csv.html', {
-                'fuente': fuente,
-                'headers': headers,
-                'rows': rows
-            })
+        # Procesamiento separado para distintos formatos
+        renderizado = None
+        if fuente.tipo == 'api':
+            renderizado = procesar_api_con_imagen(data, fuente)
+        if not renderizado and isinstance(data, dict):
+            renderizado = procesar_dict_con_listas(data, fuente)
+        if not renderizado and isinstance(data, list):
+            renderizado = procesar_lista_dicts(data, fuente)
+        if renderizado:
+            return renderizado
 
         # Mostrar como JSON plano si no se puede estructurar en tabla
-        return render(request, 'vista_csv.html', {
+        return render(request, TVC, {
             'fuente': fuente,
             'json_content': json.dumps(data, indent=2)
         })
 
     except Exception as e:
-        return render(request, 'vista_csv.html', {'error': str(e)})
+        return render(request, TVC, {'error': str(e)})
+
+
 
 @login_required   
 def listar_fuentes(request):

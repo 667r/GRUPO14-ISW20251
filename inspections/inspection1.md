@@ -27,9 +27,7 @@ Esto se debe principalmente a:
 
 # Issue de calidad 2: Duplicación de Literales
 
-## ![alt text](image.png)
-
-## Descripción
+![alt text](image.png)
 
 **Ubicación:** `vigifia_app/views.py`, línea 136  
 **Regla:** `python:S1192 - Define a constant instead of duplicating this literal `'vista_csv.html'` 6 times.`   
@@ -43,9 +41,12 @@ El literal `'vista_csv.html'` se repite 6 veces en el método `vista_csv`, cada 
 - Si se desea cambiar el nombre del template, se deben modificar múltiples líneas manualmente.
 - Incrementa el riesgo de inconsistencias y errores tipográficos.
 - Viola el principio DRY (*Don’t Repeat Yourself*).
+<<<<<<< HEAD
 
 # Issues restantes:
 
 ![alt text](image-2.png)
 
 Los issues 1 y 2 son los que más relevancia tienen con respecto al estado actual del proyecto, por ende serán los que se refactorizarán para una mejor mantenibilidad de la arquitectura. Sin embargo, existen más issues como los expuestos en la imagen 2 que tienen un impacto bajo en la arquitectura, por lo que no se abordarán en el mejoramiento de los quality issues.
+=======
+>>>>>>> 032fdd565cd2a842f921d7c163b005e150ee20a3

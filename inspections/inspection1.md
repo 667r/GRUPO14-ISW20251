@@ -48,6 +48,8 @@ La complejidad cognitiva se redujo y la función vista_csv es ahora más legible
 **Severidad:** `Crítica`  
 **Impacto:** Mantenibilidad
 
+---
+
 ## Descripción del problema
 
 El literal `'vista_csv.html'` se repite 6 veces en el método `vista_csv`, cada vez que se llama a `render()`. Esta práctica genera dificultades para mantener el código a largo plazo:
@@ -55,6 +57,26 @@ El literal `'vista_csv.html'` se repite 6 veces en el método `vista_csv`, cada 
 - Si se desea cambiar el nombre del template, se deben modificar múltiples líneas manualmente.
 - Incrementa el riesgo de inconsistencias y errores tipográficos.
 - Viola el principio DRY (*Don’t Repeat Yourself*).
+
+---
+
+## Solución aplicada
+
+- Se definió una constante TEMPLATE_VISTA_CSV = 'vista_csv.html' al inicio del archivo.
+- Se reemplazaron todas las instancias del literal por esta constante.
+
+---
+
+## Resultado tras corrección
+
+El código es más limpio y mantenible. En caso de cambiar el nombre del template, solo se modifica una línea. El issue desapareció tras re-inspección con SonarQube.
+
+---
+
+## Re-inspección
+
+<img width="1076" alt="Captura de pantalla 2025-06-23 a la(s) 12 22 20 a m" src="https://github.com/user-attachments/assets/f2a32cbe-9cb0-4b9e-91f2-4641dde3f6f9" />
+
 
 
 # Issues restantes:

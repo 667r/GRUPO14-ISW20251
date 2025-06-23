@@ -24,6 +24,20 @@ Esto se debe principalmente a:
 
 ---
 
+## Solución aplicada
+
+- Se separaron bloques lógicos en funciones auxiliares (procesar_api_con_imagen, procesar_dict_con_listas, procesar_lista_dicts).
+- Se redujo el número de condiciones anidadas.
+- Se eliminó la repetición de patrones de renderizado.
+
+---
+
+## Resultado tras corrección
+
+La complejidad cognitiva se redujo y la función vista_csv es ahora más legible y mantenible. En la re-inspección con SonarQube, este quality issue desapareció.
+
+
+
 
 # Issue de calidad 2: Duplicación de Literales
 

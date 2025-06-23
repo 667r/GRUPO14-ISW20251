@@ -84,3 +84,21 @@ El código es más limpio y mantenible. En caso de cambiar el nombre del templat
 ![alt text](image-2.png)
 
 Los issues 1 y 2 son los que más relevancia tienen con respecto al estado actual del proyecto, por ende serán los que se refactorizarán para una mejor mantenibilidad de la arquitectura. Sin embargo, existen más issues como los expuestos en la imagen 2 que tienen un impacto bajo en la arquitectura, por lo que no se abordarán en el mejoramiento de los quality issues.
+
+
+
+---
+
+## Registro de trabajo realizado
+
+| Tarea | Descripción | Tiempo empleado |
+|:-----|:-------------|:----------------|
+| 1 | Se analizó el informe de SonarQube y se eligió las dos quality issues | 15 min |
+| 2 | Se refactorizó vista_csv dividiendo la lógica en funciones auxiliares para reducir la complejidad cognitiva de 21 a menos de 15. | 40 min |
+| 3 | Se corrigió el quality issue crítico (S1192) evitando la repetición del literal 'vista_csv.html' mediante una constante. | 10 min |
+| 4 | Se realizó la re-inspección con SonarQube y se validó que ambos issues fueron resueltos exitosamente. | 10 min |
+| 5 | Se documentaron los cambios en la carpeta /inspections/ y en la Wiki del proyecto según la pauta del hito. | 15 min |
+
+** Tiempo total estimado invertido:** `1 hora y 30 minutos`
+
+---

@@ -27,9 +27,7 @@ Esto se debe principalmente a:
 
 # Issue de calidad 2: Duplicación de Literales
 
-## ![alt text](image.png)
-
-## Descripción
+![alt text](image.png)
 
 **Ubicación:** `vigifia_app/views.py`, línea 136  
 **Regla:** `python:S1192 - Define a constant instead of duplicating this literal `'vista_csv.html'` 6 times.`   
